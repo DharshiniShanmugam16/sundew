@@ -177,11 +177,12 @@ def handle_http(conn, addr):
         conn.sendall(http_response("200 OK", LOGIN_PAGE))
 
 
-# ---------- Fake SSH (banner only; Day 2 adds paramiko) ----------
+# ---------- SSH (real handshake via paramiko; see ssh_service.py) ----------
+import ssh_service
+
+
 def handle_ssh(conn, addr):
-    conn.sendall(b"SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.6\r\n")
-    client_banner = conn.recv(1024).decode(errors="replace").strip()
-    log_event(addr, "ssh", "client_banner", data=client_banner)
+    ssh_service.handle(conn, addr, log_event)
 
 
 HANDLERS = {"ftp": handle_ftp, "http": handle_http, "ssh": handle_ssh}
